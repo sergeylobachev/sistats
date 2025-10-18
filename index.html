@@ -1,15 +1,13 @@
-<!doctype html><html><head>
-<meta charset="utf-8">
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
-</head><body>
 <table id="t" class="display" style="width:100%"></table>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
 <script>
-const URL="https://raw.githubusercontent.com/sergeylobachev/sistats/main/sistats.csv";
-Papa.parse(URL,{download:true,header:true,complete:res=>{
-  const cols=Object.keys(res.data[0]||{}).map(c=>({title:c,data:c}));
-  new DataTable('#t',{data:res.data,columns:cols,pageLength:25});
-}});
+fetch("sistats.csv").then(r=>r.text()).then(csv=>{
+  const {data,errors}=Papa.parse(csv,{header:true,skipEmptyLines:true});
+  if(errors.length||!data.length){document.body.insertAdjacentHTML("afterbegin","<p>CSV load error</p>");console.log(errors,data);return;}
+  const cols=Object.keys(data[0]).map(c=>({title:c,data:c}));
+  new DataTable("#t",{data,columns:cols,pageLength:25,stateSave:true});
+}).catch(e=>{document.body.insertAdjacentHTML("afterbegin","<p>Network error</p>");console.error(e);});
 </script>
-</body></html>
