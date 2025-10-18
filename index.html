@@ -1,21 +1,25 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Inline CSV • DataTables</title>
-  <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Статистика — CSV Table</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css" />
   <style>
-    body { font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; padding: 20px; }
+    :root { --pad: 16px; }
+    body { font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: var(--pad); background:#0b0b0c; color:#e6e6e6; }
+    a { color: #7fb3ff; }
     #app { max-width: 1200px; margin: 0 auto; }
-    .status { margin: 12px 0 16px; padding: 10px 12px; background: #f6f8fa; border: 1px solid #eaecef; border-radius: 6px; }
-    tfoot input { width: 100%; box-sizing: border-box; }
+    h1 { margin: 0 0 10px; font-size: 22px; }
+    .status { margin: 10px 0 16px; padding: 10px 12px; background: #121317; border: 1px solid #262930; border-radius: 8px; }
+    table.dataTable thead th, table.dataTable tfoot th { white-space: nowrap; }
+    tfoot input { width: 100%; box-sizing: border-box; padding: 6px 8px; background:#0f1115; color:#e6e6e6; border:1px solid #2a2f3a; border-radius:6px; }
   </style>
 </head>
 <body>
   <div id="app">
-    <h1>Inline CSV → DataTable</h1>
-    <div class="status" id="status">Loading…</div>
+    <h1>CSV → Таблица (сортировки и фильтры)</h1>
+    <div class="status" id="status">Загрузка…</div>
     <table id="t" class="display" style="width:100%">
       <thead></thead>
       <tbody></tbody>
@@ -23,9 +27,9 @@
     </table>
   </div>
 
-  <!-- CSV inlined to avoid any path/CORS issues -->
+  <!-- Вшитый CSV. Никаких сетевых запросов не нужно. -->
   <script id="csvdata" type="text/csv">
-﻿Этап,Круг,Лига,Бой,Дата,Игрок,Счет,Очки_в_плюс,Сумма_в_бою,Сумма_в_плюс_в_бою,Сумма_в_плюс_у_соперников,"('Тема 1', 10)","('Тема 1', 20)","('Тема 1', 30)","('Тема 1', 40)","('Тема 1', 50)","('Тема 2', 10)","('Тема 2', 20)","('Тема 2', 30)","('Тема 2', 40)","('Тема 2', 50)","('Тема 3', 10)","('Тема 3', 20)","('Тема 3', 30)","('Тема 3', 40)","('Тема 3', 50)","('Тема 4', 10)","('Тема 4', 20)","('Тема 4', 30)","('Тема 4', 40)","('Тема 4', 50)","('Тема 5', 10)","('Тема 5', 20)","('Тема 5', 30)","('Тема 5', 40)","('Тема 5', 50)","('Тема 6', 10)","('Тема 6', 20)","('Тема 6', 30)","('Тема 6', 40)","('Тема 6', 50)","('Тема 7', 10)","('Тема 7', 20)","('Тема 7', 30)","('Тема 7', 40)","('Тема 7', 50)","('Тема 8', 10)","('Тема 8', 20)","('Тема 8', 30)","('Тема 8', 40)","('Тема 8', 50)"
+Этап,Круг,Лига,Бой,Дата,Игрок,Счет,Очки_в_плюс,Сумма_в_бою,Сумма_в_плюс_в_бою,Сумма_в_плюс_у_соперников,"('Тема 1', 10)","('Тема 1', 20)","('Тема 1', 30)","('Тема 1', 40)","('Тема 1', 50)","('Тема 2', 10)","('Тема 2', 20)","('Тема 2', 30)","('Тема 2', 40)","('Тема 2', 50)","('Тема 3', 10)","('Тема 3', 20)","('Тема 3', 30)","('Тема 3', 40)","('Тема 3', 50)","('Тема 4', 10)","('Тема 4', 20)","('Тема 4', 30)","('Тема 4', 40)","('Тема 4', 50)","('Тема 5', 10)","('Тема 5', 20)","('Тема 5', 30)","('Тема 5', 40)","('Тема 5', 50)","('Тема 6', 10)","('Тема 6', 20)","('Тема 6', 30)","('Тема 6', 40)","('Тема 6', 50)","('Тема 7', 10)","('Тема 7', 20)","('Тема 7', 30)","('Тема 7', 40)","('Тема 7', 50)","('Тема 8', 10)","('Тема 8', 20)","('Тема 8', 30)","('Тема 8', 40)","('Тема 8', 50)"
 1,1,A,1,,Вадим Барановский,260.0,260,680.0,810,550,1,0,1,0,0,0,0,0,0,0,0,1,1,1,1,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0
 1,1,A,1,,Станислав Алимпов,10.0,140,680.0,810,670,0,0,0,0,0,0,0,1,-1,1,1,0,0,0,0,0,0,0,1,0,1,-1,0,0,0,0,0,0,0,-1,0,-1,0,0,0,0,0,0,0,0
 1,1,A,1,,Максим Круглов,410.0,410,680.0,810,400,0,1,0,1,0,1,1,0,0,0,0,0,0,0,0,1,0,1,0,0,0,1,1,0,0,0,1,1,1,1,1,0,0,0,1,0,0,1,0,0
@@ -493,56 +497,72 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
   <script>
-  (function(){
+  (function() {
     const $status = document.getElementById('status');
-    const $table = document.getElementById('t');
-    function setStatus(m, err=false) { $status.textContent = m; $status.style.color = err ? '#b00020' : 'inherit'; }
+    const $table  = document.getElementById('t');
+    const setStatus = (m, err=false) => { $status.textContent = m; $status.style.color = err ? '#ff6b6b' : ''; };
 
-    // Grab CSV from the inline <script type="text/csv">
-    const csvText = document.getElementById('csvdata').textContent.replace(/^\uFEFF/, '');
+    function clean(s) { return String(s ?? '').replace(/^\uFEFF/, '').replace(/^['"]|['"]$/g,'').trim(); }
+    const isNumeric = (v) => v !== null && v !== '' && !isNaN(v) && /^[-+]?\d*(?:\.\d+)?$/.test(String(v).trim());
 
-    Papa.parse(csvText, {
-      header: true,
-      skipEmptyLines: 'greedy',
-      complete: (res) => {
-        try {
-          const rows = res.data.filter(r => r && Object.values(r).some(v => v !== null && v !== ''));
-          if (!rows.length) throw new Error('CSV parsed but no data rows');
-          const headers = res.meta.fields || Object.keys(rows[0]);
+    function initTable(parsed) {
+      console.log('[Papa] meta:', parsed.meta);
+      if (parsed.errors?.length) console.warn('[Papa] errors:', parsed.errors);
 
-          // Build thead
-          const thead = $table.tHead || $table.createTHead();
-          const tr = thead.insertRow(0);
-          headers.forEach(h => { const th = document.createElement('th'); th.textContent = h; tr.appendChild(th); });
+      const rowsRaw = Array.isArray(parsed.data) ? parsed.data : [];
+      const rows = rowsRaw.filter(r => r && Object.values(r).some(v => v !== null && v !== ''));
+      if (!rows.length) throw new Error('CSV распарсен, но строк данных не найдено.');
 
-          const dt = new DataTable($table, {
-            data: rows,
-            columns: headers.map(h => ({ title: h, data: h })),
-            pageLength: 25,
-            deferRender: true,
-            responsive: true,
-            order: [],
-          });
+      const headers = (parsed.meta?.fields?.length ? parsed.meta.fields : Object.keys(rows[0])).map(clean);
+      const rowsClean = rows.map(r => Object.fromEntries(Object.entries(r).map(([k,v]) => [clean(k), v])));
 
-          // Column filters
-          const foot = $table.createTFoot();
-          const row = foot.insertRow(0);
-          headers.forEach((_, i) => {
-            const cell = row.insertCell(-1);
-            const input = document.createElement('input');
-            input.placeholder = 'Filter';
-            input.addEventListener('keyup', () => dt.column(i).search(input.value).draw());
-            cell.appendChild(input);
-          });
+      // Build THEAD
+      const thead = $table.tHead || $table.createTHead();
+      while (thead.rows.length) thead.deleteRow(0);
+      const htr = thead.insertRow(0);
+      headers.forEach(h => { const th = document.createElement('th'); th.textContent = h; htr.appendChild(th); });
 
-          setStatus(`Loaded ${rows.length} rows • ${headers.length} columns (inline CSV)`);
-        } catch(e) {
-          console.error(e);
-          setStatus('Error: ' + e.message, true);
-        }
-      },
-      error: (err) => { console.error(err); setStatus('PapaParse error', true); }
-    });
+      // Init DataTable
+      try { if (window.DataTable?.ext) DataTable.ext.errMode = 'throw'; } catch(_){}
+      const dt = new DataTable($table, {
+        data: rowsClean,
+        columns: headers.map(h => ({ title: h, data: h, render: (d,t) => ((t==='sort'||t==='type') ? (isNumeric(d)?parseFloat(d):d??'') : (d??'')) })),
+        pageLength: 25,
+        deferRender: true,
+        responsive: true,
+        order: [],
+      });
+
+      // Column filters
+      const tfoot = $table.tFoot || $table.createTFoot();
+      while (tfoot.rows.length) tfoot.deleteRow(0);
+      const ftr = tfoot.insertRow(0);
+      headers.forEach((_, i) => {
+        const cell = ftr.insertCell(-1);
+        const input = document.createElement('input');
+        input.placeholder = 'Фильтр';
+        input.addEventListener('keyup', () => dt.column(i).search(input.value).draw());
+        cell.appendChild(input);
+      });
+
+      setStatus('Загружено ' + rowsClean.length + ' строк • ' + headers.length + ' столбцов (inline CSV)');
+    }
+
+    function boot() {
+      try {
+        const csvText = document.getElementById('csvdata').textContent.replace(/^\uFEFF/, '');
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: 'greedy',
+          complete: (res) => { try { initTable(res); } catch(e) { console.error(e); setStatus('Ошибка: ' + e.message, true); } },
+          error: (err) => { console.error(err); setStatus('PapaParse error', true); }
+        });
+      } catch(e) {
+        console.error(e);
+        setStatus('Критическая ошибка инициализации: ' + e.message, true);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', boot);
   })();
   </script>
 </body>
