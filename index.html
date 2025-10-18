@@ -6,7 +6,7 @@
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
 <script>
-const URL="https://github.com/sergeylobachev/sistats/blob/main/sistats.csv";
+const URL="https://raw.githubusercontent.com/sergeylobachev/sistats/main/sistats.csv";
 Papa.parse(URL,{download:true,header:true,complete:res=>{
   const cols=Object.keys(res.data[0]||{}).map(c=>({title:c,data:c}));
   new DataTable('#t',{data:res.data,columns:cols,pageLength:25});
