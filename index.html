@@ -1,13 +1,66 @@
-<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
-<table id="t" class="display" style="width:100%"></table>
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-<script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
-<script>
-fetch("sistats.csv").then(r=>r.text()).then(csv=>{
-  const {data,errors}=Papa.parse(csv,{header:true,skipEmptyLines:true});
-  if(errors.length||!data.length){document.body.insertAdjacentHTML("afterbegin","<p>CSV load error</p>");console.log(errors,data);return;}
-  const cols=Object.keys(data[0]).map(c=>({title:c,data:c}));
-  new DataTable("#t",{data,columns:cols,pageLength:25,stateSave:true});
-}).catch(e=>{document.body.insertAdjacentHTML("afterbegin","<p>Network error</p>");console.error(e);});
+<!doctype html>
+
+
+function initTable(parsed){
+// Papa returns an array with a possible empty object at the end; clean it.
+const rows = parsed.data.filter(obj => obj && Object.values(obj).some(v => v !== null && v !== ''));
+if (!rows.length) throw new Error('CSV loaded but no rows found. Check delimiter/headers.');
+
+
+const headers = parsed.meta.fields || Object.keys(rows[0]);
+const columns = buildColumnsFromHeaders(headers);
+
+
+// Build THEAD from headers so DataTables can render filters/ARIA correctly
+const thead = $table.tHead;
+const htr = thead.insertRow(0);
+headers.forEach(h => {
+const th = document.createElement('th');
+th.textContent = h;
+htr.appendChild(th);
+});
+
+
+const dt = new DataTable($table, {
+data: rows,
+columns: columns,
+pageLength: 25,
+deferRender: true,
+responsive: true,
+order: [], // keep input order; adjust if you prefer initial sort, e.g., [[0,'asc']]
+});
+
+
+addColumnFilters(dt);
+setStatus(`Loaded ${rows.length} rows • ${headers.length} columns`);
+}
+
+
+function loadCSV(){
+setStatus('Loading CSV…');
+Papa.parse(CSV_URL, {
+download: true,
+header: true,
+skipEmptyLines: 'greedy',
+dynamicTyping: false, // we convert numerics ourselves for sorting
+complete: (res) => {
+if (res.errors && res.errors.length) {
+console.warn('PapaParse errors:', res.errors);
+}
+try { initTable(res); }
+catch (e) { console.error(e); setStatus('Error: '+ e.message, true); }
+},
+error: (err, file, inputElem, reason) => {
+console.error('Papa error:', err, reason);
+setStatus('Failed to load CSV. Check CSV_URL and repository path.', true);
+}
+});
+}
+
+
+// Boot
+document.addEventListener('DOMContentLoaded', loadCSV);
+})();
 </script>
+</body>
+</html>
